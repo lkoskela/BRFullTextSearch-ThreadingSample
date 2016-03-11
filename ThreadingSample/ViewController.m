@@ -104,7 +104,9 @@
     for (int i = lo; i < hi; i++) {
         NSDictionary<NSString *, NSString *> *doc = [self.data objectAtIndex:i];
         NSString *identifier = doc[kBRSearchFieldNameIdentifier];
-        self.numberOfPendingOperations++;
+		dispatch_sync(self.indexQueue, ^{
+			self.numberOfPendingOperations++;
+		});
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
             dispatch_async(self.indexQueue, ^{
                 __strong ViewController *strongSelf = weakSelf;
@@ -125,7 +127,9 @@
         NSMutableDictionary<NSString *, NSString *> *doc = [NSMutableDictionary dictionaryWithDictionary:[self.data objectAtIndex:i]];
         NSString *identifier = doc[kBRSearchFieldNameIdentifier];
         [doc removeObjectForKey:kBRSearchFieldNameIdentifier];
-        self.numberOfPendingOperations++;
+		dispatch_sync(self.indexQueue, ^{
+			self.numberOfPendingOperations++;
+		});
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
             dispatch_async(self.indexQueue, ^{
                 __strong ViewController *strongSelf = weakSelf;
